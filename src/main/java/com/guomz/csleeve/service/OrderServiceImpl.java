@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +48,8 @@ public class OrderServiceImpl {
     //订单支付时间，超过此时间未支付则订单失效
     @Value("${guo.pay-time-limit}")
     private Integer payTimeLimit;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 下订单
@@ -67,8 +71,28 @@ public class OrderServiceImpl {
         //减库存
         reduceStock(orderChecker.getOrderSkuList());
         //核销优惠券
-        writeOffCoupon(userId, orderDto.getCouponId(), order.getId());
+        if (orderDto.getCouponId() != null){
+            writeOffCoupon(userId, orderDto.getCouponId(), order.getId());
+        }
+        //将订单信息写入redis
+        this.sendToRedis(userId, order.getId(), orderDto.getCouponId());
         return order.getId();
+    }
+
+    /**
+     * 将订单信息写入redis
+     * @param userId
+     * @param orderId
+     * @param couponId
+     */
+    private void sendToRedis(Long userId, Long orderId, Long couponId){
+        String keyStr = userId + "," + orderId + "," + couponId;
+        try {
+            stringRedisTemplate.opsForValue().set(keyStr, "1", this.payTimeLimit, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            //异常不要抛出，抛出会导致事务回滚
+            e.printStackTrace();
+        }
     }
 
     /**
