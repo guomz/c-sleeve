@@ -19,6 +19,12 @@ public class TokenPasswordValidator implements ConstraintValidator<TokenPassword
         this.max = constraintAnnotation.max();
     }
 
+    /**
+     * 校验密码长度
+     * @param value
+     * @param constraintValidatorContext
+     * @return
+     */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
         if(StringUtils.isEmpty(value)){

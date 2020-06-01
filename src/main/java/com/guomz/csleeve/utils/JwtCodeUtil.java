@@ -24,6 +24,7 @@ public class JwtCodeUtil {
     private static int expiredTime;
     private static int defaultScope;
 
+    //用set方法可以为静态属性使用value赋值
     @Value("${jwt.salt}")
     public void setSalt(String s){
         salt = s;
