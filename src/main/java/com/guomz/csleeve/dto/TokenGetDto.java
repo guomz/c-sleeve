@@ -7,6 +7,7 @@ import lombok.Setter;
 
 /**
  * 接收前端传入的登录信息
+ * 目前微信登陆方式不需要用到password
  */
 @Getter
 @Setter

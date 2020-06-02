@@ -49,7 +49,7 @@ public class TokenController {
     }
 
     /**
-     * 验证token是否有效
+     * 用于前端验证token是否有效，小程序会将token放入缓存并在适当的时候调用该方法校验
      * @return
      */
     @PostMapping("/verify")
