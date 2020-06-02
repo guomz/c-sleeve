@@ -64,6 +64,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             "uc.userId = :userId\n" +
             "and c.endTime < :nowTime\n" +
             "and uc.orderId is null\n" +
-            "and uc.status <d> 2\n")
+            "and uc.status <> 2\n")
     List<Coupon> findExpiredCoupon(Long userId, Date nowTime);
 }
