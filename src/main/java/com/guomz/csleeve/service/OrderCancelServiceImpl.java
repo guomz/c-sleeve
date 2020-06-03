@@ -3,6 +3,7 @@ package com.guomz.csleeve.service;
 import com.guomz.csleeve.bo.MessageBo;
 import com.guomz.csleeve.enums.OrderStatus;
 import com.guomz.csleeve.exception.http.ParameterException;
+import com.guomz.csleeve.exception.http.ServerErrorException;
 import com.guomz.csleeve.model.Order;
 import com.guomz.csleeve.model.OrderSku;
 import com.guomz.csleeve.repository.OrderRepository;
@@ -35,13 +36,21 @@ public class OrderCancelServiceImpl {
         Optional<Order> orderOptional = orderRepository.findById(messageBo.getOrderId());
         orderOptional.orElseThrow(() -> new ParameterException(50009));
         Order order = orderOptional.get();
-        if (!order.getStatus().equals(OrderStatus.UNPAID)){
-            throw new ParameterException(50011);
-        }
         //归还库存并更改订单状态
+        changeStatus(order.getId());
         skuCountReturn(order.getSnapItems());
-        order.setStatus(OrderStatus.CANCELED.value());
-        orderRepository.save(order);
+    }
+
+    /**
+     * 更改优惠券状态
+     * @param orderId
+     */
+    private void changeStatus(Long orderId){
+        Integer result = 0;
+        result = orderRepository.cancelOrder(orderId, OrderStatus.CANCELED.value());
+        if (result == null || result != 1){
+            throw new ServerErrorException(999);
+        }
     }
 
     /**

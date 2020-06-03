@@ -26,7 +26,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "set o.status = :status\n" +
             "where\n" +
             "o.id = :orderId and\n" +
-            "o.userId >= :userId")
-    int updateStatusByUserIdAndId(Long userId, Long orderId, Integer status);
+            "o.status = 1")
+    Integer cancelOrder(Long orderId, Integer status);
 }
 

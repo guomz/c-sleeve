@@ -13,6 +13,12 @@ import org.springframework.data.redis.listener.Topic;
 @Configuration
 public class RedisListenerConfiguration {
 
+    //将listener注入到容器中，防止调用被管理的bean出现空指针
+    @Bean
+    public TopicMessageListener getTopicListener(){
+        return new TopicMessageListener();
+    }
+
     @Bean
     public RedisMessageListenerContainer getListenerContainer(RedisConnectionFactory connectionFactory){
         //创建连接容器
@@ -21,7 +27,7 @@ public class RedisListenerConfiguration {
         container.setConnectionFactory(connectionFactory);
         //写入需要被监听的类型，即超时监听
         Topic topic = new PatternTopic("__keyevent@0__:expired");
-        container.addMessageListener(new TopicMessageListener(), topic);
+        container.addMessageListener(getTopicListener(), topic);
         return container;
     }
 }

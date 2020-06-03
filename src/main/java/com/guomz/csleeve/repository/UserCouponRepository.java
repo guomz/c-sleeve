@@ -29,12 +29,13 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
             "uc.status = 1")
     int writeOffCoupon(Long userId, Long couponId, Long orderId, Integer status);
 
-    @Query("select uc\n" +
-            "from UserCoupon uc\n" +
+    @Modifying
+    @Query("update UserCoupon uc\n" +
+            "set uc.status = :status, uc.orderId = null \n" +
             "where\n" +
             "uc.userId = :userId and\n" +
             "uc.couponId = :couponId and\n" +
-            "uc.status = :status and\n" +
-            "uc.orderId = :orderId\n")
-    Optional<UserCoupon> findByCouponByUserIdAndCouponIdAndOrderId(Long userId, Long couponId, Long orderId, Integer status);
+            "uc.orderId = :orderId and\n" +
+            "uc.status = 2")
+    Integer couponBack(Long userId, Long couponId, Long orderId, Integer status);
 }
