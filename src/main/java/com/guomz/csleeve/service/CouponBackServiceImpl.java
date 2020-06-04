@@ -5,7 +5,6 @@ import com.guomz.csleeve.enums.CouponStatus;
 import com.guomz.csleeve.enums.OrderStatus;
 import com.guomz.csleeve.exception.http.ParameterException;
 import com.guomz.csleeve.model.Order;
-import com.guomz.csleeve.model.UserCoupon;
 import com.guomz.csleeve.repository.OrderRepository;
 import com.guomz.csleeve.repository.UserCouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
